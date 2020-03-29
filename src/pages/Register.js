@@ -51,24 +51,9 @@ class Register extends Component {
     }
 
     handleChange(e){
-        switch(e.target.name) {
-            case("first_name"):
-                this.setState({first_name: e.target.value});
-                break;
-            case("last_name"):
-                this.setState({last_name: e.target.value});
-                break;
-            case("email"):
-                this.setState({email: e.target.value});
-                break;
-            case("password"):
-                this.setState({password: e.target.value});
-                break;
-            case("confirm_password"):
-                this.setState({confirm_password: e.target.value});
-                break;
-            default:
-        }
+        this.setState({
+            [e.target.name]: e.target.value
+        });
     }
 
     render(){
@@ -111,7 +96,7 @@ class Register extends Component {
                                 <div className="form-group form-check">
                                     <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
                                     <label className="form-check-label" htmlFor="exampleCheck1">I agree with <a
-                                        href="#">terms and conditions</a></label>
+                                        href="https://www.instagram.com/rassul.khassen/">terms and conditions</a></label>
                                 </div>
                                 <div className="form-group">
                                     <label>{this.state.errormsg}</label>

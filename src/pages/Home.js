@@ -4,7 +4,6 @@ import Tracker from "../components/Tracker";
 import axios from "axios";
 import config from "../core/config";
 import NavBar from "../components/NavBar";
-import Footer from "../components/Footer";
 
 class Home extends Component {
     constructor(props) {

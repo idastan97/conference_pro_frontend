@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import axios from "axios";
-import config from "../core/config";
+// import axios from "axios";
+// import config from "../core/config";
 import NavBar from "../components/NavBar";
 
 class Video extends Component {

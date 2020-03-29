@@ -45,15 +45,9 @@ class Login extends Component {
     }
 
     handleChange(e){
-        switch(e.target.name) {
-            case("email"):
-                this.setState({email: e.target.value});
-                break;
-            case("password"):
-                this.setState({password: e.target.value});
-                break;
-            default:
-        }
+        this.setState({
+            [e.target.name]: e.target.value
+        });
     }
 
     render(){

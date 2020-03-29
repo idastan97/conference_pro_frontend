@@ -8,7 +8,7 @@ class Footer extends Component {
     }
 
     render(){
-        let self = this;
+        // let self = this;
         var style = {
             backgroundColor: "#F8F8F8",
             borderTop: "1px solid #E7E7E7",
@@ -19,14 +19,14 @@ class Footer extends Component {
             bottom: "0",
             height: "120px",
             width: "100%",
-        }
+        };
 
         var phantom = {
             display: 'block',
             padding: '20px',
             height: '120px',
             width: '100%',
-        }
+        };
 
         return (
             <div>
@@ -38,7 +38,7 @@ class Footer extends Component {
                                 <h5 className="mb-1">CONFERENCE-PRO</h5>
                             </li>
                             <li className="list-inline-item">
-                                <a href="#!" className="btn btn-dark btn-rounded">Donate!</a>
+                                <a href="https://www.instagram.com/rassul.khassen/" className="btn btn-dark btn-rounded">Donate!</a>
                             </li>
                         </ul>
                     </div>
