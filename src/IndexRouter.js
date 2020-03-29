@@ -8,8 +8,10 @@ import {
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Video from "./pages/Video";
 import axios from 'axios';
 import config from "./core/config";
+import Footer from "./components/Footer";
 
 class IndexRouter extends React.Component{
     constructor(props){
@@ -72,8 +74,10 @@ class IndexRouter extends React.Component{
                     <Switch>
                         <Route exact path='/login' render={() => self.state.authorized ? <Redirect to='/' /> : <Login authorize={self.authorize} />} />
                         <Route exact path='/register' render={() => self.state.authorized ? <Redirect to='/' /> : <Register authorize={self.authorize} />} />
+                        <Route path='/video' render={() => self.state.authorized ? <Video gstate={self.state} logout={self.logout} /> : <Redirect to='/login' />} />
                         <Route path='/' render={() => self.state.authorized ? <Home gstate={self.state} logout={self.logout} /> : <Redirect to='/login' />} />
                     </Switch>
+                    <Footer />
                 </Router>
             </div>
         );

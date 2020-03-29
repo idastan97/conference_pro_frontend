@@ -7,6 +7,7 @@ class Tracker extends Component{
         this.state = {x: 0, y: 0, clicked: false};
         this.mouse_down = this.mouse_down.bind(this);
         this.mouse_up = this.mouse_up.bind(this);
+        this.clear = this.clear.bind(this);
     }
 
     static dist(x1, y1, x2, y2){
@@ -14,9 +15,6 @@ class Tracker extends Component{
     }
 
     static getDerivedStateFromProps(props, state){
-        // console.log(props);
-        // console.log(state);
-        // console.log("---")
         if (props.isPositionOutside){
             return {
                 clicked: false
@@ -25,7 +23,7 @@ class Tracker extends Component{
         // console.log(props.position.x + " " + props.position.y);
         if (state.clicked && Tracker.dist(state.x, state.y, props.position.x, props.position.y)>500){
             props.change_cord(props.position.x/5, props.position.y/5);
-            console.log(props);
+            // console.log(props);
             return {
                 x: props.position.x,
                 y: props.position.y
@@ -34,20 +32,24 @@ class Tracker extends Component{
         return null;
     }
 
-    mouse_down(){
-        console.log("SUKAAAA");
+    mouse_down() {
         this.setState({clicked: true});
     }
 
-    mouse_up(){
-        console.log("SUKAAAA");
+    mouse_up() {
         this.setState({clicked: false});
     }
 
+    clear() {
+        console.log("Have no fucking idea how to clear it")
+    }
+
     render(){
+        let self = this;
         return (
-            <div style={{height: "200px", border: "1px solid"}} onMouseDown={this.mouse_down} onMouseUp={this.mouse_up}>
-                <CanvasDraw canvasWidth={"100%"} canvasHeight={"100%"} brushRadius={5} lazyRadius={0}/>
+            <div style={{height: "250px"}} onMouseDown={self.mouse_down} onMouseUp={self.mouse_up}>
+                <CanvasDraw style={{border: "1px solid black"}} canvasWidth={"100%"} canvasHeight={"80%"} brushRadius={5} lazyRadius={0}/>
+                <button className="btn-dark" onClick={self.clear}>Reset</button>
             </div>
         )
     }

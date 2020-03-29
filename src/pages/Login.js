@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import config from "../core/config";
+import NavBar from "../components/NavBar";
 
 class Login extends Component {
     constructor(props) {
@@ -8,7 +9,8 @@ class Login extends Component {
         this.state = {
             email: "",
             password: "",
-            errormsg: false
+            error: false,
+            errormsg: ""
         };
         this.login = this.login.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -35,8 +37,9 @@ class Login extends Component {
                 self.props.authorize(response.data.token, self.state.email);
             })
             .catch(function (error) {
-                console.log(error);
-                self.setState({errormsg: true });
+                console.log(error.response.data.error);
+                self.setState({error: true });
+                self.setState({errormsg: error.response.data.error});
             });
 
     }
@@ -50,37 +53,44 @@ class Login extends Component {
                 this.setState({password: e.target.value});
                 break;
             default:
-
         }
     }
 
     render(){
+        let self = this;
         return (
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-4 offset-md-4">
-                        <div>
-                            <div className="form-group">
-                                <label htmlFor="exampleInputEmail1">Email address</label>
-                                <input name="email" type="email" className="form-control" id="exampleInputEmail1"
-                                       aria-describedby="emailHelp" placeholder="Enter email"
-                                       onChange ={this.handleChange} value={this.state.email}/>
-                                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with
-                                        anyone else.</small>
+            <div>
+                <NavBar current="login" logout={self.props.logout}/>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-4 offset-md-4">
+                            <div>
+                                <div className="form-group">
+                                    <label htmlFor="exampleInputEmail1">Email address</label>
+                                    <input name="email" type="email" className="form-control" id="exampleInputEmail1"
+                                           aria-describedby="emailHelp" placeholder="Enter email"
+                                           onChange ={self.handleChange} value={self.state.email}/>
+                                        <small id="emailHelp" className="form-text text-muted">We'll never share your email with
+                                            anyone else.</small>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="exampleInputPassword1">Password</label>
+                                    <input name="password" type="password" className="form-control" id="exampleInputPassword1"
+                                           placeholder="Password" onChange ={self.handleChange} value={self.state.password}/>
+                                </div>
+                                <div className="form-group form-check">
+                                    <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
+                                        <label className="form-check-label" htmlFor="exampleCheck1">Save me on this computer</label>
+                                </div>
+                                {self.state.error ?
+                                    <div className="form-group">
+                                        <label>{self.state.errormsg}</label>
+                                    </div>
+                                    :
+                                    <div></div>
+                                }
+                                <button className="btn btn-primary" onClick={self.login}>Submit</button>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="exampleInputPassword1">Password</label>
-                                <input name="password" type="password" className="form-control" id="exampleInputPassword1"
-                                       placeholder="Password" onChange ={this.handleChange} value={this.state.password}/>
-                            </div>
-                            <div className="form-group form-check">
-                                <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-                                    <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-                            </div>
-                            <div className="form-group">
-                                <label>{this.state.errormsg}</label>
-                            </div>
-                            <button className="btn btn-primary" onClick={this.login}>Submit</button>
                         </div>
                     </div>
                 </div>

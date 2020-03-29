@@ -7,6 +7,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import IndexRouter from "./IndexRouter";
 import * as serviceWorker from './serviceWorker';
+import './fonts/Sansation_Bold.ttf';
+import './fonts/Sansation_Bold_Italic.ttf';
+import './fonts/Sansation_Italic.ttf';
+import './fonts/Sansation_Light.ttf';
+import './fonts/Sansation_Light_Italic.ttf';
+import './fonts/Sansation_Regular.ttf';
+import './index.css';
 
 ReactDOM.render(<IndexRouter />, document.getElementById('root'));
 
