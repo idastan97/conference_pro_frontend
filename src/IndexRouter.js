@@ -7,11 +7,12 @@ import {
 } from 'react-router-dom';
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
+import ControllerPage from "./pages/ControllerPage";
 import Video from "./pages/Video";
 import axios from 'axios';
 import config from "./core/config";
 import Footer from "./components/Footer";
+import ReceiverPage from "./pages/ReceiverPage";
 
 class IndexRouter extends React.Component{
     constructor(props){
@@ -48,7 +49,7 @@ class IndexRouter extends React.Component{
         //             self.setState({authorized: false});
         //         });
         // }
-        self.setState({authorized: true, email: 'email'});
+        self.setState({authorized: false, email: 'email'});
     }
     componentDidMount(){
         this.check_session()
@@ -76,7 +77,9 @@ class IndexRouter extends React.Component{
                         <Route exact path='/login' render={() => self.state.authorized ? <Redirect to='/' /> : <Login authorize={self.authorize} />} />
                         <Route exact path='/register' render={() => self.state.authorized ? <Redirect to='/' /> : <Register authorize={self.authorize} />} />
                         <Route path='/video' render={() => self.state.authorized ? <Video gstate={self.state} logout={self.logout} /> : <Redirect to='/login' />} />
-                        <Route path='/' render={() => self.state.authorized ? <Home gstate={self.state} logout={self.logout} /> : <Redirect to='/login' />} />
+                        <Route path='/receiver' render={() => <ReceiverPage logout={self.logout} />} />
+                        <Route path='/' render={() => self.state.authorized ? <ControllerPage gstate={self.state} logout={self.logout} /> : <Redirect to='/login' />} />
+
                     </Switch>
                     <Footer />
                 </Router>

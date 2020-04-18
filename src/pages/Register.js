@@ -12,6 +12,7 @@ class Register extends Component {
             email: "",
             password: "",
             confirm_password: "",
+            is_machine: false,
             errormsg: false,
         };
         this.register = this.register.bind(this);
@@ -28,6 +29,7 @@ class Register extends Component {
                     last_name: self.state.last_name,
                     email: self.state.email,
                     password: self.state.password,
+                    is_machine: self.state.is_machine,
                 },
                 headers: {
                     'Content-Type': 'application/json'
@@ -52,8 +54,9 @@ class Register extends Component {
 
     handleChange(e){
         this.setState({
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.name === "is_machine" ? e.target.checked : e.target.value
         });
+        console.log(this.state);
     }
 
     render(){
@@ -94,9 +97,8 @@ class Register extends Component {
                                            placeholder="Confirm password" onChange ={this.handleChange} value={this.state.confirm_password}/>
                                 </div>
                                 <div className="form-group form-check">
-                                    <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-                                    <label className="form-check-label" htmlFor="exampleCheck1">I agree with <a
-                                        href="https://www.instagram.com/rassul.khassen/">terms and conditions</a></label>
+                                    <input type="checkbox" className="form-check-input" id="is_machine" name="is_machine" onChange ={this.handleChange} checked={this.state.is_machine}/>
+                                    <label className="form-check-label" htmlFor="exampleCheck1">it is a machine</label>
                                 </div>
                                 <div className="form-group">
                                     <label>{this.state.errormsg}</label>
