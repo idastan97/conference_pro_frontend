@@ -13,12 +13,42 @@ class Home extends Component {
             y: 0
         };
         this.change_cord = this.change_cord.bind(this);
+        this.pen_up = this.pen_up.bind(this);
+        this.pen_down = this.pen_down.bind(this);
     }
 
     change_cord(x, y){
         // this.setState({x: x, y: y});
-        console.log(x+" "+y);
-        axios(config.DESKTOP_URL + '/put?x='+x+'&y='+y, {
+        console.log("change_cord: " +x+" "+y);
+        axios(config.DESKTOP_URL + '/point?x='+x+'&y='+y, {
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    pen_up(){
+        console.log("pen_up");
+        axios(config.DESKTOP_URL + '/pen_up', {
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    pen_down(z){
+        console.log("pen_down");
+        axios(config.DESKTOP_URL + '/pen_down?z='+z, {
             method: "GET"
         })
             .then(function (response) {
@@ -46,7 +76,7 @@ class Home extends Component {
                     <div className="row">
                         <div  className="tracker col-md-6 offset-3">
                             <ReactCursorPosition style={{width: "100%"}}>
-                                <Tracker change_cord={self.change_cord}/>
+                                <Tracker clicked={false} change_cord={self.change_cord} pen_up={self.pen_up} pen_down={self.pen_down}/>
                             </ReactCursorPosition>
                         </div>
                     </div>

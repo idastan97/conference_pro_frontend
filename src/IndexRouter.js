@@ -26,28 +26,29 @@ class IndexRouter extends React.Component{
     }
     check_session(){
         let self = this;
-        if (!localStorage.getItem('token')){
-            self.setState({authorized: false});
-        } else {
-            axios(config.BACKEND_URL+'/auth/checktoken/', {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'token ' + localStorage.getItem('token'),
-                }
-            })
-                .then(function (response) {
-                    console.log(response.data);
-                    // localStorage.setItem('email', response.data[0]);
-                    // localStorage.setItem('userId', response.data[1]);
-                    // self.login(response.data[0].toLowerCase());
-                    self.setState({authorized: true, email: 'email'});
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    self.setState({authorized: false});
-                });
-        }
+        // if (!localStorage.getItem('token')){
+        //     self.setState({authorized: false});
+        // } else {
+        //     axios(config.BACKEND_URL+'/auth/checktoken/', {
+        //         method: "POST",
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Authorization': 'token ' + localStorage.getItem('token'),
+        //         }
+        //     })
+        //         .then(function (response) {
+        //             console.log(response.data);
+        //             // localStorage.setItem('email', response.data[0]);
+        //             // localStorage.setItem('userId', response.data[1]);
+        //             // self.login(response.data[0].toLowerCase());
+        //             self.setState({authorized: true, email: 'email'});
+        //         })
+        //         .catch(function (error) {
+        //             console.log(error);
+        //             self.setState({authorized: false});
+        //         });
+        // }
+        self.setState({authorized: true, email: 'email'});
     }
     componentDidMount(){
         this.check_session()
