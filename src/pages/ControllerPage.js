@@ -13,10 +13,16 @@ class ControllerPage extends Component {
             x: 0,
             y: 0,
             peer: new Peer({initiator: false, trickle: false}),
+            socket: new WebSocket(config.BACKEND_SOCKET+'/peers/'),
         };
         this.state.peer.on('signal', (data) => {
             console.log("signal: ");
             console.log(JSON.stringify(data));
+            this.state.socket.send(JSON.stringify({
+                method: "connect_machine",
+                peer_id: data,
+                machine_id: document.getElementById("machine_id").value,
+            }));
         });
 
         this.change_cord = this.change_cord.bind(this);
@@ -35,10 +41,32 @@ class ControllerPage extends Component {
     }
 
     connect_to_other_peer(){
-        let other_id = JSON.parse(document.getElementById("otherid").value);
-        console.log("other peer");
-        console.log(other_id)
-        this.state.peer.signal(other_id);
+        // let other_id = JSON.parse(document.getElementById("otherid").value);
+        // console.log("other peer");
+        // console.log(other_id)
+        // this.state.peer.signal(other_id);
+        let self = this;
+        axios(config.BACKEND_URL+'/auth/connect_to_machine/', {
+            method: "POST",
+            data: {
+                machine_id: parseInt(document.getElementById("machine_id").value)
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'token ' + localStorage.getItem('token'),
+            }
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+                let other_id = JSON.parse(response.data.peer_id);
+                console.log("other peer");
+                console.log(other_id);
+                self.state.peer.signal(other_id);
+            })
+            .catch(function (error) {
+                console.log(error.response.data.error);
+            });
     }
 
     change_cord(x, y){
@@ -103,7 +131,8 @@ class ControllerPage extends Component {
                             <ReactCursorPosition style={{width: "100%"}}>
                                 <Tracker clicked={false} change_cord={self.change_cord} pen_up={self.pen_up} pen_down={self.pen_down}/>
                             </ReactCursorPosition>
-                            <textarea id={"otherid"}/>
+                            <input id="machine_id" />
+
                             <button  onClick={this.connect_to_other_peer}>connect</button>
                         </div>
                     </div>

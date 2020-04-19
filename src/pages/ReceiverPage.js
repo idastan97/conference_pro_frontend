@@ -10,14 +10,48 @@ class ReceiverPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            stream: null
+            stream: null,
+            socket: new WebSocket(config.BACKEND_SOCKET+'/peers/'),
         };
+        let self = this;
+        this.state.socket.onopen = function(e) {
+            self.state.socket.send(JSON.stringify({
+                "method": "register_machine",
+                "token": localStorage.getItem('token')
+            }));
+        };
+        this.state.socket.onmessage = function(e) {
+            console.log(e);
+            let data = JSON.parse(e.data);
+            if (data.method === "connect_to_peer"){
+                self.state.peer.signal(data.peer_id);
+            }
+        };
+
         navigator.webkitGetUserMedia({video: true, audio: false}, (stream) => {
             this.setState({stream: stream});
             this.state.peer = new Peer({initiator: true, trickle: false, stream: stream});
             this.state.peer.on('signal', (data) => {
                 console.log("signal: ");
                 console.log(JSON.stringify(data));
+
+                axios(config.BACKEND_URL+'/auth/set_peer_id/', {
+                    method: "POST",
+                    data: {
+                        peer_id: JSON.stringify(data)
+                    },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'token ' + localStorage.getItem('token'),
+                    }
+                })
+                    .then(function (response) {
+                        console.log("    ----    ");
+                        console.log(response.data);
+                    })
+                    .catch(function (error) {
+                        console.log(error.response.data.error);
+                    });
             });
         }, (err) =>{
             console.log(err);
@@ -50,6 +84,7 @@ class ReceiverPage extends Component {
                     </div>
                     <video id={"video"} />
                     <div className="row">
+                        <h>{self.props.machine_id}</h>
                         <div  className="col-md-6 offset-3">
                             <textarea id={"otherid"}/>
                             <button  onClick={this.connect_to_other_peer}>connect</button>

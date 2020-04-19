@@ -34,7 +34,8 @@ class Login extends Component {
                 // localStorage.setItem('token', response.data[0]);
                 // localStorage.setItem('userId', response.data[1]);
                 // self.props.login(self.state.email.toLowerCase());
-                self.props.authorize(response.data.token, self.state.email);
+                localStorage.setItem('token', response.data.token);
+                self.props.authorize(response.data);
             })
             .catch(function (error) {
                 console.log(error.response.data.error);

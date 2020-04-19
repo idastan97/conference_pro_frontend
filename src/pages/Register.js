@@ -41,7 +41,8 @@ class Register extends Component {
                     // localStorage.setItem('token', response.data[0]);
                     // localStorage.setItem('userId', response.data[1]);
                     // self.props.login(self.state.email.toLowerCase());
-                    self.props.authorize(response.data.key, self.state.email);
+                    localStorage.setItem('token', response.data.token);
+                    self.props.authorize(response.data);
                 })
                 .catch(function (error) {
                     console.log(error);
