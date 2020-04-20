@@ -49,7 +49,8 @@ class ControllerPage extends Component {
         axios(config.BACKEND_URL+'/auth/connect_to_machine/', {
             method: "POST",
             data: {
-                machine_id: parseInt(document.getElementById("machine_id").value)
+                machine_id: parseInt(document.getElementById("machine_id").value),
+                machine_password: parseInt(document.getElementById("machine_password").value),
             },
             headers: {
                 'Content-Type': 'application/json',
@@ -126,14 +127,20 @@ class ControllerPage extends Component {
                         <p>Write your signature down in the window and automatic pen will repeat it in the paper</p>
                     </div>
                     <video id={"video"} />
+                    <div className="form-group">
+                        <label>mchine_id:</label>
+                        <input id="machine_id" />
+                    </div>
+                    <div className="form-group">
+                        <label>mchine_password:</label>
+                        <input id="machine_password" />
+                    </div>
+                    <button  onClick={this.connect_to_other_peer}>connect</button>
                     <div className="row">
                         <div  className="tracker col-md-6 offset-3">
                             <ReactCursorPosition style={{width: "100%"}}>
                                 <Tracker clicked={false} change_cord={self.change_cord} pen_up={self.pen_up} pen_down={self.pen_down}/>
                             </ReactCursorPosition>
-                            <input id="machine_id" />
-
-                            <button  onClick={this.connect_to_other_peer}>connect</button>
                         </div>
                     </div>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi id mollitia nulla. Eligendi esse ipsa magni nostrum rerum! Commodi consequatur illum, ipsum labore nulla officiis perferendis sequi tenetur ut veniam!</p>

@@ -83,8 +83,11 @@ class ReceiverPage extends Component {
                         <p>Your video: </p>
                     </div>
                     <video id={"video"} />
+                    <h2>your machine_id: {self.props.machine_id}</h2>
+                    <h2>your machine_password: {self.props.machine_password}</h2>
                     <div className="row">
-                        <h>{self.props.machine_id}</h>
+
+
                         <div  className="col-md-6 offset-3">
                             <textarea id={"otherid"}/>
                             <button  onClick={this.connect_to_other_peer}>connect</button>
