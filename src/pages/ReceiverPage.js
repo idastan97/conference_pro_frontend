@@ -11,8 +11,14 @@ class ReceiverPage extends Component {
         super(props);
         this.state = {
             stream: null,
+            peer: null,
             socket: new WebSocket(config.BACKEND_SOCKET+'/peers/'),
+            connected: false
         };
+        this.setup_peer = this.setup_peer.bind(this);
+        this.change_cord = this.change_cord.bind(this);
+        this.pen_up = this.pen_up.bind(this);
+        this.pen_down = this.pen_down.bind(this);
         let self = this;
         this.state.socket.onopen = function(e) {
             self.state.socket.send(JSON.stringify({
@@ -25,11 +31,26 @@ class ReceiverPage extends Component {
             let data = JSON.parse(e.data);
             if (data.method === "connect_to_peer"){
                 self.state.peer.signal(data.peer_id);
+                self.setState({connected: true})
+            }
+            if (data.method === "client_off"){
+                self.setState({connected: false});
+                // let video = document.getElementById("video");
+                // video.srcObject = null;
+                self.setup_peer();
             }
         };
 
+        this.setup_peer();
+        this.connect_to_other_peer = this.connect_to_other_peer.bind(this);
+
+    }
+
+    setup_peer(){
+        let self = this;
         navigator.webkitGetUserMedia({video: true, audio: false}, (stream) => {
-            this.setState({stream: stream});
+            self.setState({stream: stream});
+
             this.state.peer = new Peer({initiator: true, trickle: false, stream: stream});
             this.state.peer.on('signal', (data) => {
                 console.log("signal: ");
@@ -53,10 +74,68 @@ class ReceiverPage extends Component {
                         console.log(error.response.data.error);
                     });
             });
+            this.state.peer.on("data", (data) => {
+                console.log("  data from peer");
+                data = JSON.parse(data);
+                if (data.method === "point"){
+                    self.change_cord(data.x, data.y);
+                }
+                if (data.method === "pen_down"){
+                    self.pen_down(data.z);
+                }
+                if (data.method === "pen_up"){
+                    self.pen_up();
+                }
+            });
         }, (err) =>{
             console.log(err);
         });
-        this.connect_to_other_peer = this.connect_to_other_peer.bind(this);
+    }
+
+    change_cord(x, y){
+        console.log("change_cord: " +x+" "+y);
+        axios(config.DESKTOP_URL + '/point?x='+x+'&y='+y, {
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    pen_up(){
+        console.log("pen_up");
+        axios(config.DESKTOP_URL + '/pen_up', {
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    pen_down(z){
+        console.log("pen_down");
+
+        axios(config.DESKTOP_URL + '/pen_down?z='+z, {
+            method: "GET"
+        })
+            .then(function (response) {
+                console.log("    ----    ");
+                console.log(response.data);
+                // localStorage.setItem('token', response.data[0]);
+                // localStorage.setItem('userId', response.data[1]);
+                // self.props.login(self.state.email.toLowerCase());
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -85,12 +164,11 @@ class ReceiverPage extends Component {
                     <video id={"video"} />
                     <h2>your machine_id: {self.props.machine_id}</h2>
                     <h2>your machine_password: {self.props.machine_password}</h2>
+                    {self.state.connected ? <h2 className="alert-success">Connected</h2> :  <h2>not connected</h2>}
                     <div className="row">
 
 
                         <div  className="col-md-6 offset-3">
-                            <textarea id={"otherid"}/>
-                            <button  onClick={this.connect_to_other_peer}>connect</button>
                         </div>
                     </div>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi id mollitia nulla. Eligendi esse ipsa magni nostrum rerum! Commodi consequatur illum, ipsum labore nulla officiis perferendis sequi tenetur ut veniam!</p>

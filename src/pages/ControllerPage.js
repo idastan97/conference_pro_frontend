@@ -12,9 +12,39 @@ class ControllerPage extends Component {
         this.state = {
             x: 0,
             y: 0,
-            peer: new Peer({initiator: false, trickle: false}),
+            peer: null,
             socket: new WebSocket(config.BACKEND_SOCKET+'/peers/'),
+            connected: false,
+            message: "",
+            didMount: false,
         };
+        let self = this;
+        this.setup_peer = this.setup_peer.bind(this);
+        this.setup_peer();
+
+        this.state.socket.onmessage = function(e) {
+            console.log(e);
+            let data = JSON.parse(e.data);
+            if (data.method === "client_off"){
+                self.setState({connected: false});
+                let video = document.getElementById("video");
+                video.srcObject = null;
+            }
+        };
+
+        this.change_cord = this.change_cord.bind(this);
+        this.pen_up = this.pen_up.bind(this);
+        this.pen_down = this.pen_down.bind(this);
+
+
+        this.connect_to_other_peer = this.connect_to_other_peer.bind(this);
+    }
+
+    setup_peer(){
+        let self = this;
+        let peer = new Peer({initiator: false, trickle: false});
+        // this.setState({peer: peer});
+        this.state.peer = peer;
         this.state.peer.on('signal', (data) => {
             console.log("signal: ");
             console.log(JSON.stringify(data));
@@ -23,13 +53,15 @@ class ControllerPage extends Component {
                 peer_id: data,
                 machine_id: document.getElementById("machine_id").value,
             }));
+            self.setState({connected: true, message: ""})
         });
-
-        this.change_cord = this.change_cord.bind(this);
-        this.pen_up = this.pen_up.bind(this);
-        this.pen_down = this.pen_down.bind(this);
-
-        this.connect_to_other_peer = this.connect_to_other_peer.bind(this);
+        if (self.state.didMount){
+            self.state.peer.on('stream', (stream) => {
+                let video = document.getElementById("video");
+                video.srcObject = stream;
+                video.play();
+            });
+        }
     }
 
     componentDidMount() {
@@ -38,13 +70,10 @@ class ControllerPage extends Component {
             video.srcObject = stream;
             video.play();
         });
+        this.setState({"didMount": true});
     }
 
     connect_to_other_peer(){
-        // let other_id = JSON.parse(document.getElementById("otherid").value);
-        // console.log("other peer");
-        // console.log(other_id)
-        // this.state.peer.signal(other_id);
         let self = this;
         axios(config.BACKEND_URL+'/auth/connect_to_machine/', {
             method: "POST",
@@ -66,54 +95,36 @@ class ControllerPage extends Component {
                 self.state.peer.signal(other_id);
             })
             .catch(function (error) {
-                console.log(error.response.data.error);
+                console.log(error);
+                self.setState({message: "machine not found"});
             });
     }
 
     change_cord(x, y){
-        // this.setState({x: x, y: y});
         console.log("change_cord: " +x+" "+y);
-        axios(config.DESKTOP_URL + '/point?x='+x+'&y='+y, {
-            method: "GET"
-        })
-            .then(function (response) {
-                console.log("    ----    ");
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        let data = {
+            method: "point",
+            x: x,
+            y: y,
+        };
+        this.state.peer.send(JSON.stringify(data));
     }
 
     pen_up(){
         console.log("pen_up");
-        axios(config.DESKTOP_URL + '/pen_up', {
-            method: "GET"
-        })
-            .then(function (response) {
-                console.log("    ----    ");
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        let data = {
+            method: "pen_up",
+        };
+        this.state.peer.send(JSON.stringify(data));
     }
 
     pen_down(z){
         console.log("pen_down");
-        axios(config.DESKTOP_URL + '/pen_down?z='+z, {
-            method: "GET"
-        })
-            .then(function (response) {
-                console.log("    ----    ");
-                console.log(response.data);
-                // localStorage.setItem('token', response.data[0]);
-                // localStorage.setItem('userId', response.data[1]);
-                // self.props.login(self.state.email.toLowerCase());
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        let data = {
+            method: "pen_down",
+            z: z,
+        };
+        this.state.peer.send(JSON.stringify(data));
     }
 
     render(){
@@ -136,6 +147,8 @@ class ControllerPage extends Component {
                         <input id="machine_password" />
                     </div>
                     <button  onClick={this.connect_to_other_peer}>connect</button>
+                    <h2 className="alert-danger">{self.state.message}</h2>
+                    {self.state.connected ? <h2 className="alert-success">Connected</h2> :  <h2>not connected</h2>}
                     <div className="row">
                         <div  className="tracker col-md-6 offset-3">
                             <ReactCursorPosition style={{width: "100%"}}>
